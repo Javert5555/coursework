@@ -22,14 +22,16 @@ class JPEG2000:
 
     @staticmethod
     # wavelet transform
-    def dwt_transform():
-        # image = np.array(Image.open('./try/img_yuv_compress_1.jpg').convert('L'))
-        image = np.array(Image.open('./assets/poehaly.jpg').convert('L'))
+    def dwt_transform(y_array):
+        image = np.array(Image.open('./try/img_yuv_compress_1.jpg').convert('L'))
+        # image = np.array(Image.open('./assets/poehaly.jpg').convert('L'))
+        print(image)
+        Image.fromarray(np.uint8(image)).save('./try/test1111.jpg')
 
         # Выполнение DWT
         # содержащий коэффициенты приближения (approximation) и детализации (detail) для каждого уровня разложения изображения на основе вейвлета Хаара
-        coeffs = pywt.dwt2(image, 'haar')
-        print('coeffs', coeffs)
+        coeffs = pywt.dwt2(y_array, 'haar')
+        # print('coeffs', coeffs)
 
         # new_img = Image.fromarray(np.array(coeffs, dtype=np.uint8))
         # new_img.save('./try/output_image1111.jpg')
@@ -40,16 +42,18 @@ class JPEG2000:
 
         # Обратное преобразование
         # reconstructed_image = pywt.idwt2((cA, (cH, cV, cD)), 'haar')
-        ###################################################################reconstructed_image = pywt.idwt2((coeffs), 'haar')
+        reconstructed_image = pywt.idwt2((coeffs), 'haar')
         # print('reconstructed_image', reconstructed_image)
 
         # Сохранение изображения
         # Image.fromarray(np.uint8(reconstructed_image)).save('./try/img_dwt_compress_2.jpg')
-        #########################################################################Image.fromarray(np.uint8(reconstructed_image)).save('./try/test.jpg')
+        Image.fromarray(np.uint8(reconstructed_image)).save('./try/test.jpg')
+
 
     @staticmethod
     def rgb_to_yuv(img_arr):
         img_arr_copy = img_arr.copy()
+        print(len(img_arr_copy[0]))
         for i in range(len(img_arr_copy)):
             for j in range(len(img_arr_copy[i])):
                 red = img_arr_copy[i][j][0]
@@ -95,6 +99,9 @@ class JPEG2000:
         new_img = Image.fromarray(np.array(img_yuv_arr, dtype=np.uint8))
         new_img.save('./try/img_yuv_compress_1.jpg')
 
+        img_dwt_arr = JPEG2000.dwt_transform(img_yuv_arr[:,:,0])
+        print(img_yuv_arr[:,:,0])
+
         return img_yuv_arr
 
     @staticmethod
@@ -104,7 +111,7 @@ class JPEG2000:
         img = Image.open('./assets/poehaly.jpg').convert('RGB')
         img_arr = np.asarray(img)
         compress_img_arr = JPEG2000.compress(img_arr)
-        JPEG2000.dwt_transform()
+        # JPEG2000.dwt_transform()
         decompress_img_arr = JPEG2000.decompress(compress_img_arr)
         # JPEG2000.dwt_inverse_transform()
 
