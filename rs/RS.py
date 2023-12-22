@@ -151,11 +151,11 @@ class RS:
         return result
 
     def get_init_text_split(init_text):
-        print('init_squence_int', init_text)
+        # print('init_squence_int', init_text)
         binary_sequence = ''.join([''.join([bin(ord(char))[2:].rjust(12, '0')]) for char in init_text])
-        print('binary_sequence111', binary_sequence)
+        # print('binary_sequence111', binary_sequence)
         result = [int(binary_sequence[i:i+8].ljust(8, '0'), 2) for i in range(0, len(binary_sequence), 8)]
-        print('arrays', result)
+        # print('arrays', result)
         return result
 
     def encode(init_text, k_val):
@@ -170,7 +170,6 @@ class RS:
         # print(gen_pol)
         # initial_text = "DON'T PANIC"
         if (m == 0):
-            print(123)
             return {
                 'initial_text': initial_text,
                 'code_words_sequence': RS.join_arrays_to_string(RS.split_text_into_arrays(initial_text, n)),
@@ -185,7 +184,7 @@ class RS:
             code_word = remainder_div + initial_code_text
             new_initial_text_code_words.append(code_word)
 
-        print('new_initial_text_code_words', new_initial_text_code_words)
+        # print('new_initial_text_code_words', new_initial_text_code_words)
         return {
             'initial_text': initial_text,
             'code_words_sequence': RS.join_arrays_to_string(new_initial_text_code_words),
@@ -202,16 +201,16 @@ class RS:
 
 
     def get_init_text(num_arrays, len_to_get_letter, len_to_get_number):
-        print(num_arrays)
+        # print(num_arrays)
         # 000001100100000001101111000001101110000000100111000001110100000000100000000001110000000001100001000001101110000001101001000001100011000000001010
         binary_sequence = ''.join([''.join([bin(num)[2:].rjust(len_to_get_number, '0') for num in num_array]) for num_array in num_arrays])
         # binary_sequence = ''.join([[''.join(reversed(bin(num)[2:][::-1].zfill(len_to_get_letter))) for num in num_array] for num_array in num_arrays])
-        print('binary_sequence', binary_sequence)
+        # print('binary_sequence', binary_sequence)
 
         binary_sequences = [binary_sequence[i : i + len_to_get_letter] for i in range(0, len(binary_sequence), len_to_get_letter)]
-        print('binary_sequences', binary_sequences)
+        # print('binary_sequences', binary_sequences)
         text = [chr(int('0b' + ''.join(RS.remove_consecutive_zeros(list(binary_sequence))), 2)) for binary_sequence in binary_sequences]
-        print('text', text)
+        # print('text', text)
         return text
         # result = [int(binary_sequence[i:i+len_to_get_number].ljust(len_to_get_number, '0'), 2) for i in range(0, len(binary_sequence), len_to_get_number)]
         # print('arrays', result)
@@ -246,10 +245,10 @@ class RS:
             return 'cant convet to numbers'
         # удаляем из массивов незначащие нули
         num_arrays_without_useless_zeros = [RS.remove_consecutive_zeros(num_array) for num_array in num_arrays]
-        print(num_arrays_without_useless_zeros)
+        # print(num_arrays_without_useless_zeros)
         # print('num_arrays_without_useless_zeros', num_arrays_without_useless_zeros)
         init_text = RS.get_init_text(num_arrays_without_useless_zeros, len_to_get_letter, len_to_get_number)
-        print('init_text', init_text)
+        # print('init_text', init_text)
         return {
             'init_text': ''.join(init_text)
         }
@@ -261,190 +260,3 @@ class RS:
 
     # при m=4 g=[116, 231, 216, 30, 1]
 
-class SecondWindow(tk.Toplevel):
-    def __init__(self, master=None, result=None):
-        super().__init__(master)
-        self.title('Коды рида соломона')
-        self.minsize(720, 660)
-
-        self.f_left = tk.Frame(self)
-        self.f_left.pack(side='top')
-        self.f_left.pack(padx=(10, 10))
-
-        self.label1 = tk.Label(self.f_left, text=result['title1'])
-        self.label1.pack(side='top')
-        self.label1.pack(pady=10)
-
-        self.text_code_words = scrolledtext.ScrolledText(self.f_left, wrap=tk.WORD, height=10)
-        self.text_code_words.pack(side='top')
-        self.text_code_words.insert(tk.END, result['initial_text'])
-        
-        self.label2 = tk.Label(self.f_left, text=result['title2'])
-        self.label2.pack(side='top')
-        self.label2.pack(pady=10)
-
-        self.text_code_words_with_mistake = scrolledtext.ScrolledText(self.f_left, wrap=tk.WORD, height=10)
-        self.text_code_words_with_mistake.pack(side='top')
-        self.text_code_words_with_mistake.insert(tk.END, result['code_words_sequence'])
-        
-        self.label3 = tk.Label(self.f_left, text=result['title3'])
-        self.label3.pack(side='top')
-        self.label3.pack(pady=10)
-
-        self.text_code_words_without_mistake = scrolledtext.ScrolledText(self.f_left, wrap=tk.WORD, height=10)
-        self.text_code_words_without_mistake.pack(side='top')
-        self.text_code_words_without_mistake.insert(tk.END, result['gen_pol'])
-
-class ThirdWindow(tk.Toplevel):
-    def __init__(self, master=None, result=None):
-        super().__init__(master)
-        self.title('Коды рида соломона')
-        self.minsize(720, 260)
-
-        self.f_left = tk.Frame(self)
-        self.f_left.pack(side='top')
-        self.f_left.pack(padx=(10, 10))
-
-        self.f_right = tk.Frame(self)
-        self.f_right.pack(side='left')
-        self.f_right.pack(padx=(10, 10))
-
-        self.label1 = tk.Label(self.f_left, text=result['title1'])
-        self.label1.pack(side='top')
-        self.label1.pack(pady=10)
-
-        self.text_code_words = scrolledtext.ScrolledText(self.f_left, wrap=tk.WORD, height=10)
-        self.text_code_words.pack(side='top')
-        self.text_code_words.insert(tk.END, result['init_text'])
-        
-     
-class Main(tk.Tk):
-    def __init__(self):
-        super().__init__()
-        self.geometry('1280x480')
-        self.minsize(1280, 480)
-        self.title('Коды рида соломона, окно ввода данных')
-
-        self.f_left = tk.Frame(self)
-        self.f_left.pack(side='left')
-        self.f_left.pack(padx=(40, 0))
-
-        self.f_right = tk.Frame(self)
-        self.f_right.pack(side='right')
-        self.f_right.pack()
-
-        self.f_bottom = tk.Frame(self)
-        self.f_bottom.pack(side='bottom')
-        self.f_bottom.pack(padx=(20, 0))
-        self.f_bottom.pack(pady=(10, 10))
-
-        self.f_btn_1 = tk.Frame(self.f_left)
-        self.f_btn_1.pack(side='bottom')
-        self.f_btn_1.pack(pady=(20, 20))
-
-        self.f_btn_2 = tk.Frame(self.f_right)
-        self.f_btn_2.pack(side='bottom')
-        self.f_btn_2.pack(pady=(20, 20))
-
-        self.label_initial_text_to_code = tk.Label(self.f_left, text='Введите текст, который надо закодировать: ')
-        self.label_initial_text_to_code.pack(side='top')
-        self.label_initial_text_to_code.pack(pady=(10, 0))
-
-        self.initial_text_to_code = scrolledtext.ScrolledText(self.f_left, wrap=tk.WORD, height=20, width=55)
-        self.initial_text_to_code.pack(side='top')
-        self.initial_text_to_code.pack(pady=(10, 0))
-        # -----------------------------------------------------------------------------------------------
-        self.label_initial_text_to_decode = tk.Label(self.f_right, text='Введите текст, который надо декодировать: ')
-        self.label_initial_text_to_decode.pack(side='top')
-        self.label_initial_text_to_decode.pack(pady=(10, 0))
-
-        self.initial_text_to_decode = scrolledtext.ScrolledText(self.f_right, wrap=tk.WORD, height=20, width=55)
-        self.initial_text_to_decode.pack(side='top')
-        self.initial_text_to_decode.pack(pady=(10, 0))
-
-        self.label_k = tk.Label(self.f_bottom, text='Введите k, длину информационных слов')
-        self.label_k.pack(side='top')
-        self.label_k.pack(pady=(10, 0))
-
-        self.k = scrolledtext.ScrolledText(self.f_bottom, wrap=tk.WORD, height=2, width=5)
-        self.k.pack(side='top')
-        self.k.pack(pady=(10, 0))
-
-        self.len_params = tk.Label(self.f_bottom, text=f'Длина кодовых слов: {len(RS.get_gf_table()) - 1}.')
-        self.len_params.pack(side='top')
-        self.len_params.pack(pady=(10, 0))
-
-
-        button_1 = tk.Button(self.f_btn_1, text='Закодировать', font='Times 12', command=self.get_code_text)
-        button_1.pack(side='bottom')
-        button_1.pack(padx=(0, 20))
-
-        button_2 = tk.Button(self.f_btn_2, text='Декодировать', font='Times 12', command=self.get_decode_text)
-        button_2.pack(side='bottom')
-        button_2.pack(padx=(0, 20))
-
-    def open_second_window(self, result):
-        self.new_window = SecondWindow(self, result=result)
-
-    def open_third_window(self, result):
-        self.new_window = ThirdWindow(self, result=result)
-    
-    def get_code_text(self):
-        try:
-            self.initial_code_text_var = self.initial_text_to_code.get("1.0","end")
-            if (self.initial_code_text_var.strip() == ''):
-                messagebox.showwarning(title="Предупреждение", message="Введите текст, который надо закодировать")
-                return
-            self.k_var = self.k.get("1.0","end")
-            if (self.k_var.strip() not in [str(i) for i in range(256)]):
-                messagebox.showwarning(title="Предупреждение", message="Введите k / Неверно укеазано k")
-                return
-            if (int(self.k_var.strip()) > len(RS.get_gf_table()) - 1):
-                messagebox.showwarning(title="Предупреждение", message="k > n")
-                return
-        except:
-            messagebox.showwarning(title="Предупреждение", message="Что-то пошло не так")
-            return
-
-        self.result = RS.encode(self.initial_code_text_var, int(self.k_var.strip()))
-
-        self.open_second_window({
-            'title1': 'Начальный текст:',
-            'initial_text': self.result['initial_text'],
-            'title2': 'Последовательность кодовых слов:',
-            'code_words_sequence': self.result['code_words_sequence'],
-            'title3': 'Порождающий полином:',
-            'gen_pol': self.result['gen_pol']
-        })
-    
-    def get_decode_text(self):
-        try:
-            self.initial_text_to_decode_var = self.initial_text_to_decode.get("1.0","end")
-            if (self.initial_text_to_decode_var.strip() == ''):
-                messagebox.showwarning(title="Предупреждение", message="Введите текст, который надо закодировать")
-                return
-            self.k_var = self.k.get("1.0","end")
-            if (self.k_var.strip() not in [str(i) for i in range(256)]):
-                messagebox.showwarning(title="Предупреждение", message="Введите k / Неверно укеазано k")
-                return
-            if (int(self.k_var.strip()) > len(RS.get_gf_table()) - 1):
-                messagebox.showwarning(title="Предупреждение", message="k > n")
-                return
-        except:
-            messagebox.showwarning(title="Предупреждение", message="Что-то пошло не так")
-            return
-
-        self.result = RS.decode(self.initial_text_to_decode_var, int(self.k_var.strip()))
-
-        if (self.result == 'cant convet to numbers'):
-            messagebox.showwarning(title="Ошибка", message="Введены некорректные данные на декодирование")
-            return
-
-        self.open_third_window({
-            'title1': 'Декодированный текст:',
-            'init_text': self.result['init_text'],
-        })
-
-if __name__ == "__main__":
-    main = Main()
-    main.mainloop()
