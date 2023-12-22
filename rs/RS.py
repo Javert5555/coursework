@@ -240,7 +240,10 @@ class RS:
         m = n - k
         len_to_get_letter = 12
         len_to_get_number = 8
-        num_arrays = RS.from_num_sequence_to_arrays(text, n, m)
+        try:
+            num_arrays = RS.from_num_sequence_to_arrays(text, n, m)
+        except:
+            return 'cant convet to numbers'
         # удаляем из массивов незначащие нули
         num_arrays_without_useless_zeros = [RS.remove_consecutive_zeros(num_array) for num_array in num_arrays]
         print(num_arrays_without_useless_zeros)
@@ -296,7 +299,7 @@ class ThirdWindow(tk.Toplevel):
     def __init__(self, master=None, result=None):
         super().__init__(master)
         self.title('Коды рида соломона')
-        self.minsize(720, 660)
+        self.minsize(720, 260)
 
         self.f_left = tk.Frame(self)
         self.f_left.pack(side='top')
@@ -351,7 +354,7 @@ class Main(tk.Tk):
         self.initial_text_to_code.pack(side='top')
         self.initial_text_to_code.pack(pady=(10, 0))
         # -----------------------------------------------------------------------------------------------
-        self.label_initial_text_to_decode = tk.Label(self.f_right, text='Введите текст, который надо раскодировать: ')
+        self.label_initial_text_to_decode = tk.Label(self.f_right, text='Введите текст, который надо декодировать: ')
         self.label_initial_text_to_decode.pack(side='top')
         self.label_initial_text_to_decode.pack(pady=(10, 0))
 
@@ -376,7 +379,7 @@ class Main(tk.Tk):
         button_1.pack(side='bottom')
         button_1.pack(padx=(0, 20))
 
-        button_2 = tk.Button(self.f_btn_2, text='Раскодировать', font='Times 12', command=self.get_decode_text)
+        button_2 = tk.Button(self.f_btn_2, text='Декодировать', font='Times 12', command=self.get_decode_text)
         button_2.pack(side='bottom')
         button_2.pack(padx=(0, 20))
 
@@ -433,8 +436,12 @@ class Main(tk.Tk):
 
         self.result = RS.decode(self.initial_text_to_decode_var, int(self.k_var.strip()))
 
+        if (self.result == 'cant convet to numbers'):
+            messagebox.showwarning(title="Ошибка", message="Введены некорректные данные на декодирование")
+            return
+
         self.open_third_window({
-            'title1': 'Начальный текст:',
+            'title1': 'Декодированный текст:',
             'init_text': self.result['init_text'],
         })
 
