@@ -49,10 +49,41 @@ class JPEG2000:
     #     # Image.fromarray(np.uint8(reconstructed_image)).save('./try/img_dwt_compress_2.jpg')
     #     Image.fromarray(np.uint8(reconstructed_image)).save('./try/test.jpg')
 
+    @staticmethod
+    def quantization(y_array):
+        # img_arr = np.array(img).astype(np.uint8)
+        img_arr = y_array
+
+        (h, w) = img_arr.shape
+        i_quantization_img = np.empty_like(img_arr)
+
+        max_value = np.amax(img_arr)
+        print(max_value)
+        min_value = np.amin(img_arr)
+        print(min_value)
+
+
+        step = (max_value - min_value) / 2 ** h
+        print(step)
+
+        # loop through ever coefficient in img
+        for i in range(0, w):
+            for j in range(0, h):
+                # if img_arr[j][i] >= 0:
+                #     sign = 1
+                # else:
+                #     sign = -1
+                # i_quantization_img[j][i] = sign * math.floor(abs(img_arr[j][i]) / 30)
+                # print(img_arr[j][i])
+                i_quantization_img[j][i] = round(img_arr[j][i] / step + 0.5) * step
+        coeffs = pywt.dwt2(i_quantization_img, 'haar')
+        reconstructed_image_arr = pywt.idwt2((coeffs), 'haar')
+        Image.fromarray(np.uint8(reconstructed_image_arr)).save('./try/quant.jpg')
+        return i_quantization_img
 
     @staticmethod
     # wavelet transform
-    def dwt_transform(img_yuv_arr):
+    def dwt_transform():
         # Загрузка изображения
         image_path = './try/yuv.jpg'
         # image_path = './try/test.jpg'
@@ -121,7 +152,7 @@ class JPEG2000:
         reconstructed_image_arr = pywt.idwt2((coeffs), 'haar')
         Image.fromarray(np.uint8(reconstructed_image_arr)).save('./try/yuv.jpg')
 
-        return np.uint8(reconstructed_image_arr)
+        return img_arr_copy
 
     @staticmethod
     def yuv_to_rgb(img_arr):
@@ -137,6 +168,8 @@ class JPEG2000:
                 img_arr_copy[i][j][0] = y + 1.402 * (cr - 128)
                 img_arr_copy[i][j][1] = y - 0.3441 * (cb - 128) - 0.7141 * (cr - 128)
                 img_arr_copy[i][j][2] = y + 1.772 * (cb - 128)
+        Image.fromarray(np.uint8(img_arr_copy)).save('./try/yuv_res.jpg')
+
         return img_arr_copy
     
     @staticmethod
@@ -151,11 +184,19 @@ class JPEG2000:
     @staticmethod
     def compress(img_arr):
         img_yuv_arr = JPEG2000.rgb_to_yuv(img_arr)
-        
         # new_img = Image.fromarray(np.array(img_yuv_arr, dtype=np.uint8))
         # new_img.save('./try/img_yuv_compress_1.jpg')
 
-        img_dwt_arr = JPEG2000.dwt_transform(img_yuv_arr)
+        # img_dwt_arr = JPEG2000.dwt_transform(img_yuv_arr)
+
+        quantization_arr = JPEG2000.quantization(img_yuv_arr[:,:,0])
+        print(quantization_arr)
+        new_yuv_arr = np.copy(img_yuv_arr)
+
+        for i in range(len(new_yuv_arr)):
+            for j in range(len(new_yuv_arr[i])):
+                new_yuv_arr[i][j][0] = quantization_arr[i][j]
+        JPEG2000.yuv_to_rgb(new_yuv_arr)
         print(img_yuv_arr[:,:,0])
 
         return img_yuv_arr
