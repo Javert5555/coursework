@@ -46,35 +46,37 @@ class JPEG2000:
         # tile_size = round(image_array.shape[0] / 10)  # Размер тайла
         tile_size = 32  # Размер тайла
         # image_array.shape[0]: первый элемент - количество строк, второй элемент - количество столбцов
-        for i in range(0, image_array.shape[0], tile_size):
-            for j in range(0, image_array.shape[1], tile_size):
-                tile = image_array[i:i+tile_size, j:j+tile_size]
-                coeffs = pywt.wavedec2(tile, 'haar', level=1)  # Разложение тайла
-                # print('coeffs', coeffs)
-                # Здесь можно выполнить сжатие коэффициентов
+        try:
+            for i in range(0, image_array.shape[0], tile_size):
+                for j in range(0, image_array.shape[1], tile_size):
+                    tile = image_array[i:i+tile_size, j:j+tile_size]
+                    coeffs = pywt.wavedec2(tile, 'haar', level=1)  # Разложение тайла
+                    # print('coeffs', coeffs)
+                    # Здесь можно выполнить сжатие коэффициентов
 
-                threshold = 20  # Пороговое значение для сжатия
-                coeffs = [pywt.threshold(i, threshold) for i in coeffs]
-                # print('coeffs',coeffs)
+                    threshold = 20  # Пороговое значение для сжатия
+                    coeffs = [pywt.threshold(i, threshold) for i in coeffs]
+                    # print('coeffs',coeffs)
 
-                # Восстановление тайла
-                # reconstructed_tile = pywt.waverec2(coeffs, 'haar')
-                reconstructed_tile = pywt.waverec2(coeffs[:-1] + [tuple([None]*len(coeffs[-1]))], 'haar')
-                try:
-                    tiles.append(reconstructed_tile[:, :])  # Удаление последнего канала
-                except:
-                    pass
-        # print(image_array)
+                    # Восстановление тайла
+                    # reconstructed_tile = pywt.waverec2(coeffs, 'haar')
+                    reconstructed_tile = pywt.waverec2(coeffs[:-1] + [tuple([None]*len(coeffs[-1]))], 'haar')
+                    try:
+                        tiles.append(reconstructed_tile[:, :])  # Удаление последнего канала
+                    except:
+                        pass
+            # print(image_array)
 
-        # Сборка изображения из восстановленных тайлов
-        reconstructed_image = np.zeros_like(image_array)
-        k = 0
-        for i in range(0, image_array.shape[0], tile_size):
-            for j in range(0, image_array.shape[1], tile_size):
-                print(k, len(tiles))
-                reconstructed_image[i:i+tile_size, j:j+tile_size] = tiles[k]
-                k += 1
-        
+            # Сборка изображения из восстановленных тайлов
+            reconstructed_image = np.zeros_like(image_array)
+            k = 0
+            for i in range(0, image_array.shape[0], tile_size):
+                for j in range(0, image_array.shape[1], tile_size):
+                    print(k, len(tiles))
+                    reconstructed_image[i:i+tile_size, j:j+tile_size] = tiles[k]
+                    k += 1
+        except:
+            return y_arr
         return reconstructed_image
 
 
