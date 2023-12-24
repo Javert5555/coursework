@@ -19,7 +19,7 @@ class JPEG2000:
         print(min_value)
 
 
-        step = (max_value - min_value) / 2 ** h
+        step = (max_value - min_value) / 2 ** 10
         print(step)
 
         for i in range(0, w):
@@ -127,10 +127,11 @@ class JPEG2000:
         return img_yuv_arr
 
     @staticmethod
-    def run():
+    def run(file_path):
         # img = Image.open('./assets/Рохлин.jpg').convert('RGB')
         # img = Image.open('./assets/240x160.jpg').convert('RGB')
-        img = Image.open('./assets/700x1000.jpg').convert('RGB')
+        # img = Image.open('./assets/700x1000.jpg').convert('RGB')
+        img = Image.open(file_path).convert('RGB')
         img_arr = np.asarray(img)
         compress_img_arr = JPEG2000.compress(img_arr)
         # JPEG2000.dwt_transform()
@@ -139,4 +140,4 @@ class JPEG2000:
 
 
 
-JPEG2000.run()
+# JPEG2000.run()
